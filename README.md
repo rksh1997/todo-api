@@ -4,9 +4,9 @@ A todo list api just for sharping my Node.js skills.
 
 ## Todo
 
-- Scalable folder structure
-- Integrate code linters
-- Create user model
+- :heavy_check_mark: Scalable folder structure
+- :heavy_check_mark: Integrate code linters
+- :heavy_check_mark: Create user model
 - User signup with email and password
 - User login with email and password
 - User signup with Facebook
