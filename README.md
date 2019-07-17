@@ -18,8 +18,8 @@ A todo list api just for sharping my Node.js skills.
 - Untrash a todo
 - Delete a todo (permanently)
 - Complete a todo
-- Add request body schema validation
-- Add user input validation
+- :white_check_mark: Add request body schema validation
+- :white_check_mark: Add user input validation
 - Add security headers
 - Send email verification message
 - Verify email
