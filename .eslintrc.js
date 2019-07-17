@@ -2,23 +2,25 @@ module.exports = {
   env: {
     es6: true,
     node: true,
-    mocha: true
+    mocha: true,
   },
-  extends: ["airbnb", "plugin:security/recommended", "prettier"],
+  extends: ['airbnb', 'plugin:security/recommended', 'prettier'],
   globals: {
-    Atomics: "readonly",
-    SharedArrayBuffer: "readonly"
+    Atomics: 'readonly',
+    SharedArrayBuffer: 'readonly',
   },
   parserOptions: {
     ecmaVersion: 2018,
-    sourceType: "module"
+    sourceType: 'module',
   },
-  parser: "babel-eslint",
-  plugins: ["security", "prettier"],
+  parser: 'babel-eslint',
+  plugins: ['security', 'prettier'],
   rules: {
-    indent: ["error", 2],
-    quotes: ["error", "single"],
-    semi: ["error", "always"],
-    "linebreak-style": 0
-  }
+    indent: ['error', 2],
+    quotes: ['error', 'single'],
+    semi: ['error', 'always'],
+    'linebreak-style': 0,
+    'class-methods-use-this': 0,
+    'import/prefer-default-export': 0,
+  },
 };
