@@ -1,4 +1,8 @@
-version: 2
+version: 2.1
+
+orbs:
+  heroku: circleci/heroku@0.0.8
+  
 jobs:
   test:
     docker:
@@ -18,9 +22,19 @@ jobs:
       - run: yarn lint
       - run: yarn test
 
+  deploy:
+    executor: heroku/default
+    steps:
+      - checkout
+      - heroku/install
+      - heroku/deploy-via-git
+          only-branch: master
+
 workflows:
   version: 2
-  test:
+  test_and_deploy:
     jobs:
       - test
-
+      - deploy:
+          requires:
+            - test

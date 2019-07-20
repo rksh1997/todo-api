@@ -1,3 +1,5 @@
+import '@babel/polyfill';
+
 import connectDB from './db';
 import app from './app';
 import winston from './lib/winston';
