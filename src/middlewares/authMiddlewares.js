@@ -16,8 +16,8 @@ export async function isAuthenticated(req, res, next) {
   }
 
   try {
-    const { id } = await jwt.verify(token, JWT_SECRET);
-    req.userID = id;
+    const { sub } = await jwt.verify(token, JWT_SECRET);
+    req.userID = sub;
     return next();
   } catch (e) {
     return res.status(UNAUTHORIZED).json(UnAuthorizedError);

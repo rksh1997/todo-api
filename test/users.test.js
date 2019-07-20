@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import chai, { should, expect } from 'chai';
 import chaiHttp from 'chai-http';
 import { OK, UNAUTHORIZED, CREATED, CONFLICT, BAD_REQUEST } from 'http-status';
@@ -11,6 +12,7 @@ chai.use(should);
 
 describe('Users', () => {
   before(async () => {
+    await mongoose.disconnect();
     await connectDB();
     await User.deleteMany({});
   });
