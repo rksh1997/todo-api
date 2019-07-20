@@ -17,14 +17,14 @@ if (NODE_ENV === 'development') {
   app.use(logger('dev'));
 }
 
-app.use('/api/v1', v1Routes);
-
-app.get((req, res) => {
+app.get('/api/v1/health', (req, res) => {
   res.status(OK).json({
     status: OK,
     response: { messages: ['App is healthy'] },
   });
 });
+
+app.use('/api/v1', v1Routes);
 
 // eslint-disable-next-line
 app.use((req, res, next) => {
