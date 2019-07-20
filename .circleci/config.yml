@@ -27,7 +27,7 @@ jobs:
     steps:
       - checkout
       - heroku/install
-      - heroku/deploy-via-git
+      - heroku/deploy-via-git:
           only-branch: master
 
 workflows:
