@@ -29,6 +29,7 @@ jobs:
       - heroku/install
       - heroku/deploy-via-git:
           only-branch: master
+          force: true
 
 workflows:
   version: 2
