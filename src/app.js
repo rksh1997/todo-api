@@ -1,7 +1,7 @@
 import express from 'express';
 import logger from 'morgan';
 import bodyParser from 'body-parser';
-import { NOT_FOUND, INTERNAL_SERVER_ERROR } from 'http-status';
+import { OK, NOT_FOUND, INTERNAL_SERVER_ERROR } from 'http-status';
 
 import winston from './lib/winston';
 import v1Routes from './routes/v1';
@@ -19,12 +19,20 @@ if (NODE_ENV === 'development') {
 
 app.use('/api/v1', v1Routes);
 
-app.use((_, res) => {
+app.get((req, res) => {
+  res.status(OK).json({
+    status: OK,
+    response: { messages: ['App is healthy'] },
+  });
+});
+
+// eslint-disable-next-line
+app.use((req, res, next) => {
   res.status(NOT_FOUND).json(NotFoundError);
 });
 
 // eslint-disable-next-line
-app.use((err, _, res, __) => {
+app.use((err, req, res, next) => {
   if (NODE_ENV === 'development') {
     winston.error(err);
   }
