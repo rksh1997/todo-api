@@ -8,7 +8,7 @@ A todo list api just for sharping my Node.js skills.
 - :heavy_check_mark: Integrate code linters
 - :heavy_check_mark: Create user model
 - :heavy_check_mark: User signup with email and password
-- User login with email and password
+- :heavy_check_mark: User login with email and password
 - User signup with Facebook
 - User login with Facebook
 - Create todo model
@@ -23,6 +23,6 @@ A todo list api just for sharping my Node.js skills.
 - Add security headers
 - Send email verification message
 - Verify email
-- CI / CD
+- :heavy_check_mark: CI / CD
 - Dockerize the app
 - Integrate Sentry
