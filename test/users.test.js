@@ -1,6 +1,6 @@
-import chai, { should } from 'chai';
+import chai, { should, expect } from 'chai';
 import chaiHttp from 'chai-http';
-import { CREATED, CONFLICT, BAD_REQUEST } from 'http-status';
+import { OK, UNAUTHORIZED, CREATED, CONFLICT, BAD_REQUEST } from 'http-status';
 
 import connectDB from '../src/db';
 import app from '../src/app';
@@ -49,7 +49,35 @@ describe('Users', () => {
       });
 
     response.should.have.status(BAD_REQUEST);
-    response.body.response.email.should.be.a('array');
-    response.body.response.password.should.be.a('array');
+    response.body.errors.email.should.be.a('array');
+    response.body.errors.password.should.be.a('array');
+  });
+
+  it('Should login user with email and password', async () => {
+    const response = await chai
+      .request(app)
+      .post('/api/v1/users/login/basic')
+      .send({
+        email: 'fake@gmail.com',
+        password: 'fake1234',
+      });
+
+    response.should.have.status(OK);
+    response.body.response.user.email.should.equal('fake@gmail.com');
+    expect(response.body.response.user.password).to.not.be.a('string');
+    response.body.response.token.should.be.a('string');
+  });
+
+  it('Should not login with wrong email password', async () => {
+    const response = await chai
+      .request(app)
+      .post('/api/v1/users/login/basic')
+      .send({
+        email: 'fake@gmail.com',
+        password: 'fke1234',
+      });
+
+    response.should.have.status(UNAUTHORIZED);
+    response.body.errors.form.should.be.a('array');
   });
 });

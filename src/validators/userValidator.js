@@ -11,3 +11,12 @@ export const registerBasicSchema = Joi.object()
       .required(),
   })
   .required();
+
+export const loginBasicSchema = Joi.object()
+  .keys({
+    email: Joi.string()
+      .email()
+      .required(),
+    password: Joi.string().required(),
+  })
+  .required();

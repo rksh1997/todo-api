@@ -9,8 +9,8 @@ export class TodoError extends Error {
   toJSON() {
     return {
       status: this.status,
-      response: {
-        message: this.message,
+      errors: {
+        messages: [this.message],
       },
     };
   }

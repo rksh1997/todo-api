@@ -1,7 +1,10 @@
-import { CREATED, BAD_REQUEST, CONFLICT } from 'http-status';
+import { OK, CREATED, BAD_REQUEST, CONFLICT, UNAUTHORIZED } from 'http-status';
 
 import * as UserService from '../services/UserService';
-import { registerBasicSchema } from '../validators/userValidator';
+import {
+  registerBasicSchema,
+  loginBasicSchema,
+} from '../validators/userValidator';
 import { formatJoiError } from '../lib/utils';
 
 export async function registerBasic(req, res, next) {
@@ -13,7 +16,7 @@ export async function registerBasic(req, res, next) {
     if (error) {
       return res.status(BAD_REQUEST).json({
         status: BAD_REQUEST,
-        response: formatJoiError(error),
+        errors: formatJoiError(error),
       });
     }
 
@@ -21,7 +24,7 @@ export async function registerBasic(req, res, next) {
     if (alreadExists) {
       return res.status(CONFLICT).json({
         status: CONFLICT,
-        response: {
+        errors: {
           email: ['email already exists'],
         },
       });
@@ -29,6 +32,40 @@ export async function registerBasic(req, res, next) {
 
     await UserService.registerBasic(req.body);
     return res.status(CREATED).json({ status: CREATED, response: null });
+  } catch (e) {
+    return next(e);
+  }
+}
+
+export async function loginBasic(req, res, next) {
+  try {
+    const { error } = loginBasicSchema.validate(req.body, {
+      abortEarly: false,
+    });
+    if (error) {
+      return res.status(BAD_REQUEST).json({
+        status: BAD_REQUEST,
+        errors: formatJoiError(error),
+      });
+    }
+
+    const user = await UserService.loginBasic(req.body);
+    if (!user) {
+      return res.status(UNAUTHORIZED).json({
+        status: UNAUTHORIZED,
+        errors: {
+          form: ['Invalid email or password'],
+        },
+      });
+    }
+
+    return res.status(OK).json({
+      status: OK,
+      response: {
+        user,
+        token: user.generateLoginToken(),
+      },
+    });
   } catch (e) {
     return next(e);
   }

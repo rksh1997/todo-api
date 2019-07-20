@@ -12,3 +12,17 @@ export async function userEmailExists(email) {
 
   return user !== null;
 }
+
+export async function loginBasic({ email, password }) {
+  const user = await User.findOne({ email });
+  if (!user) {
+    return false;
+  }
+
+  const valid = await user.comparePassword(password);
+  if (!valid) {
+    return false;
+  }
+
+  return user;
+}
