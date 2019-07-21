@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import chai, { should } from 'chai';
 import chaiHttp from 'chai-http';
-import { CREATED } from 'http-status';
+import { OK, CREATED } from 'http-status';
 
 import connectDB from '../src/db';
 import app from '../src/app';
@@ -36,5 +36,17 @@ describe('Todos', () => {
     response.should.have.status(CREATED);
     response.body.response.todo.title.should.equal('Todo title');
     response.body.response.todo.user.should.equal(user.id);
+  });
+
+  it('Should list user todos', async () => {
+    const response = await chai
+      .request(app)
+      .get('/api/v1/todos')
+      .set('Authorization', token);
+
+    response.should.have.status(OK);
+    response.body.response.todos.should.be.a('array');
+    response.body.response.todos.length.should.equal(1);
+    response.body.response.todos[0].user.should.equal(user.id);
   });
 });

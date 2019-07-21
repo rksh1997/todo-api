@@ -1,8 +1,20 @@
-import { CREATED, BAD_REQUEST } from 'http-status';
+import { OK, CREATED, BAD_REQUEST } from 'http-status';
 
 import * as TodoService from '../services/TodoService';
 import { createTodoSchema } from '../validators/todoValidator';
 import { formatJoiError } from '../lib/utils';
+
+export async function listTodos(req, res, next) {
+  try {
+    const todos = await TodoService.getUserTodos(req.userID);
+    res.status(OK).json({
+      status: OK,
+      response: { todos },
+    });
+  } catch (e) {
+    next(e);
+  }
+}
 
 export async function createTodo(req, res, next) {
   try {
