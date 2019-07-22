@@ -1,8 +1,9 @@
-import { OK, CREATED, BAD_REQUEST } from 'http-status';
+import { OK, CREATED, BAD_REQUEST, NOT_FOUND, ACCEPTED } from 'http-status';
 
 import * as TodoService from '../services/TodoService';
 import { createTodoSchema } from '../validators/todoValidator';
 import { formatJoiError } from '../lib/utils';
+import { NotFoundError } from '../lib/errors';
 
 export async function listTodos(req, res, next) {
   try {
@@ -36,5 +37,44 @@ export async function createTodo(req, res, next) {
     });
   } catch (e) {
     return next(e);
+  }
+}
+
+export async function ensureTodoExists(req, res, next, id) {
+  try {
+    const todo = await TodoService.findById(id);
+    if (!todo) {
+      res.status(NOT_FOUND).json(NotFoundError);
+    } else {
+      next();
+    }
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function trashTodo(req, res, next) {
+  const { id } = req.params;
+  try {
+    const todo = await TodoService.updateById(id, { trashed: true });
+    res.status(ACCEPTED).json({
+      status: ACCEPTED,
+      response: { todo },
+    });
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function untrashTodo(req, res, next) {
+  const { id } = req.params;
+  try {
+    const todo = await TodoService.updateById(id, { trashed: false });
+    res.status(ACCEPTED).json({
+      status: ACCEPTED,
+      response: { todo },
+    });
+  } catch (e) {
+    next(e);
   }
 }

@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import chai, { should } from 'chai';
 import chaiHttp from 'chai-http';
-import { OK, CREATED } from 'http-status';
+import { OK, CREATED, ACCEPTED } from 'http-status';
 
 import connectDB from '../src/db';
 import app from '../src/app';
@@ -13,6 +13,7 @@ chai.use(should);
 
 let token;
 let user;
+let todo;
 describe('Todos', () => {
   before(async () => {
     await mongoose.disconnect();
@@ -36,6 +37,10 @@ describe('Todos', () => {
     response.should.have.status(CREATED);
     response.body.response.todo.title.should.equal('Todo title');
     response.body.response.todo.user.should.equal(user.id);
+    response.body.response.todo.trashed.should.equal(false);
+
+    // eslint-disable-next-line
+    todo = response.body.response.todo;
   });
 
   it('Should list user todos', async () => {
@@ -48,5 +53,25 @@ describe('Todos', () => {
     response.body.response.todos.should.be.a('array');
     response.body.response.todos.length.should.equal(1);
     response.body.response.todos[0].user.should.equal(user.id);
+  });
+
+  it('Should trash todo', async () => {
+    const response = await chai
+      .request(app)
+      .put(`/api/v1/todos/${todo._id}/trash`)
+      .set('Authorization', token);
+
+    response.should.have.status(ACCEPTED);
+    response.body.response.todo.trashed.should.equal(true);
+  });
+
+  it('Should untrash todo', async () => {
+    const response = await chai
+      .request(app)
+      .put(`/api/v1/todos/${todo._id}/untrash`)
+      .set('Authorization', token);
+
+    response.should.have.status(ACCEPTED);
+    response.body.response.todo.trashed.should.equal(false);
   });
 });
