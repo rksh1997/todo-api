@@ -16,8 +16,8 @@ A todo list api just for sharping my Node.js skills.
 - :heavy_check_mark: List user todos
 - :heavy_check_mark: Trash a todo
 - :heavy_check_mark: Untrash a todo
-- Delete a todo (permanently)
-- Complete a todo
+- :heavy_check_mark: Delete a todo (permanently)
+- :heavy_check_mark: Complete a todo
 - :white_check_mark: Add request body schema validation
 - :white_check_mark: Add user input validation
 - Add security headers

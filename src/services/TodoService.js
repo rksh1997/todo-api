@@ -1,6 +1,7 @@
 import Todo from '../models/Todo';
 
 export const findById = _id => Todo.findOne({ _id });
+export const deleteById = _id => Todo.deleteOne({ _id });
 
 export async function getUserTodos(user) {
   const todos = await Todo.find({ user });

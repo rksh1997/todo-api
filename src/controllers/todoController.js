@@ -46,6 +46,7 @@ export async function ensureTodoExists(req, res, next, id) {
     if (!todo) {
       res.status(NOT_FOUND).json(NotFoundError);
     } else {
+      req.todo = todo;
       next();
     }
   } catch (e) {
@@ -73,6 +74,32 @@ export async function untrashTodo(req, res, next) {
     res.status(ACCEPTED).json({
       status: ACCEPTED,
       response: { todo },
+    });
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function completeTodo(req, res, next) {
+  const { id } = req.params;
+  try {
+    const todo = await TodoService.updateById(id, { complete: true });
+    res.status(ACCEPTED).json({
+      status: ACCEPTED,
+      response: { todo },
+    });
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function deleteTodo(req, res, next) {
+  const { id } = req.params;
+  try {
+    await TodoService.deleteById(id);
+    res.status(ACCEPTED).json({
+      status: ACCEPTED,
+      response: { todo: req.todo },
     });
   } catch (e) {
     next(e);

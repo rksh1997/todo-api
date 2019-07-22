@@ -74,4 +74,24 @@ describe('Todos', () => {
     response.should.have.status(ACCEPTED);
     response.body.response.todo.trashed.should.equal(false);
   });
+
+  it('Should complete todo', async () => {
+    const response = await chai
+      .request(app)
+      .put(`/api/v1/todos/${todo._id}/complete`)
+      .set('Authorization', token);
+
+    response.should.have.status(ACCEPTED);
+    response.body.response.todo.complete.should.equal(true);
+  });
+
+  it('Should delete todo', async () => {
+    const response = await chai
+      .request(app)
+      .delete(`/api/v1/todos/${todo._id}`)
+      .set('Authorization', token);
+
+    response.should.have.status(ACCEPTED);
+    response.body.response.todo._id.should.equal(todo._id);
+  });
 });
