@@ -20,7 +20,7 @@ A todo list api just for sharping my Node.js skills.
 - :heavy_check_mark: Complete a todo
 - :white_check_mark: Add request body schema validation
 - :white_check_mark: Add user input validation
-- Add security headers
+- :heavy_check_mark: Add security headers
 - Send email verification message
 - Verify email
 - :heavy_check_mark: CI / CD

@@ -4,14 +4,17 @@ import bodyParser from 'body-parser';
 import { OK, NOT_FOUND, INTERNAL_SERVER_ERROR } from 'http-status';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import * as Sentry from '@sentry/node';
 
 import winston from './lib/winston';
 import v1Routes from './routes/v1';
-import { NODE_ENV } from './config';
+import { NODE_ENV, SENTRY_DSN } from './config';
 import { NotFoundError, InternalServerError } from './lib/errors';
 
 const app = express();
+Sentry.init({ dsn: SENTRY_DSN });
 
+app.use(Sentry.Handlers.requestHandler());
 app.use(
   rateLimit({
     windowMs: 60 * 1000,
@@ -24,6 +27,9 @@ app.use(bodyParser.json());
 
 if (NODE_ENV === 'development') {
   app.use(logger('dev'));
+  app.get('/api/v1/debug-sentry', () => {
+    throw new Error('sentry is working');
+  });
 }
 
 app.get('/api/v1/health', (req, res) => {
@@ -34,6 +40,8 @@ app.get('/api/v1/health', (req, res) => {
 });
 
 app.use('/api/v1', v1Routes);
+
+app.use(Sentry.Handlers.errorHandler());
 
 // eslint-disable-next-line
 app.use((req, res, next) => {
