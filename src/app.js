@@ -2,6 +2,8 @@ import express from 'express';
 import logger from 'morgan';
 import bodyParser from 'body-parser';
 import { OK, NOT_FOUND, INTERNAL_SERVER_ERROR } from 'http-status';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 
 import winston from './lib/winston';
 import v1Routes from './routes/v1';
@@ -10,6 +12,13 @@ import { NotFoundError, InternalServerError } from './lib/errors';
 
 const app = express();
 
+app.use(
+  rateLimit({
+    windowMs: 60 * 1000,
+    max: 30,
+  }),
+);
+app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
