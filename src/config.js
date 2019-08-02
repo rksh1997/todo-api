@@ -15,5 +15,14 @@ export const SENTRY_DSN = process.env.SENTRY_DSN || '';
 export const VERIFICATION_SECRET =
   process.env.VERIFICATION_SECRET || '%$3cdeZS';
 
+export const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+
+// SMTP
+export const SMTP_HOST = process.env.SMTP_HOST || 'smtp.ethereal.email';
+export const SMTP_PORT = process.env.SMTP_PORT || 587;
+export const { SMTP_USER } = process.env;
+export const { SMTP_PASS } = process.env;
+export const EMAIL_FROM = process.env.EMAIL_FROM || 'noreply@todoapp.com';
+
 // Database
 export const DB_URL = process.env.DB_URL || 'mongodb://localhost:27017/todoapp';

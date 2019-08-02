@@ -74,6 +74,17 @@ describe('Users', () => {
     response.should.have.status(UNAUTHORIZED);
   });
 
+  it('Should not verify user email with wrong token', async () => {
+    const response = await chai
+      .request(app)
+      .post('/api/v1/users/verify')
+      .send({
+        token: 'wrong-token',
+      });
+
+    response.should.have.status(UNAUTHORIZED);
+  });
+
   it('Should verify user email', async () => {
     const { verificationToken } = await User.findOne({
       email: 'fake@gmail.com',

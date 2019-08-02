@@ -2,7 +2,14 @@ import mongoose, { Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-import { JWT_SECRET, VERIFICATION_SECRET } from '../config';
+import {
+  JWT_SECRET,
+  VERIFICATION_SECRET,
+  EMAIL_FROM,
+  NODE_ENV,
+} from '../config';
+import { sendEmail } from '../lib/mailer';
+import verifyEmailTemplate from '../lib/verifyEmailTemplate';
 
 const userSchema = new Schema({
   email: {
@@ -29,6 +36,9 @@ userSchema.pre('save', async function hashPassword(done) {
   // if new and not oauth registration, create verification token
   if (this.isNew && !this.isVerified) {
     this.verificationToken = this.generateVerificationToken();
+    if (NODE_ENV !== 'test') {
+      await this.sendVerificationEmail();
+    }
   }
 
   done();
@@ -62,6 +72,15 @@ userSchema.methods.generateVerificationToken = function generateVerificationToke
   };
 
   return jwt.sign(payload, VERIFICATION_SECRET);
+};
+
+userSchema.methods.sendVerificationEmail = async function sendVerificationEmail() {
+  await sendEmail({
+    from: EMAIL_FROM,
+    to: this.email,
+    subject: 'Confirm your TodoApp email',
+    html: verifyEmailTemplate(this.verificationToken),
+  });
 };
 
 export default mongoose.model('User', userSchema);
