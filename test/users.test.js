@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import chai, { should, expect } from 'chai';
 import chaiHttp from 'chai-http';
+import nock from 'nock';
 import {
   OK,
   UNAUTHORIZED,
@@ -125,5 +126,25 @@ describe('Users', () => {
 
     response.should.have.status(UNAUTHORIZED);
     response.body.errors.form.should.be.a('array');
+  });
+
+  it('Should login with facebook', async () => {
+    nock('https://graph.facebook.com')
+      .get('/v4.0/me?fields=email&access_token=1')
+      .reply(200, {
+        email: 'fake@facebook.com',
+        id: '1234',
+      });
+
+    const response = await chai
+      .request(app)
+      .post('/api/v1/users/login/facebook')
+      .send({
+        token: '1',
+      });
+
+    response.should.have.status(OK);
+    response.body.response.user.email.should.equal('fake@facebook.com');
+    response.body.response.token.should.be.a('string');
   });
 });

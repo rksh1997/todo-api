@@ -12,6 +12,7 @@ import * as UserService from '../services/UserService';
 import {
   registerBasicSchema,
   loginBasicSchema,
+  loginFacebookSchema,
 } from '../validators/userValidator';
 import { formatJoiError } from '../lib/utils';
 import { VERIFICATION_SECRET } from '../config';
@@ -101,5 +102,31 @@ export async function verifyEmail(req, res) {
         form: ['Invalid or expired token'],
       },
     });
+  }
+}
+
+export async function loginFacebook(req, res, next) {
+  try {
+    const { error } = loginFacebookSchema.validate(req.body, {
+      abortEarly: false,
+    });
+    if (error) {
+      return res.status(BAD_REQUEST).json({
+        status: BAD_REQUEST,
+        errors: formatJoiError(error),
+      });
+    }
+
+    const user = await UserService.loginFacebook(req.body.token);
+
+    return res.status(OK).json({
+      status: OK,
+      response: {
+        user,
+        token: user.generateLoginToken(),
+      },
+    });
+  } catch (e) {
+    return next(e);
   }
 }

@@ -21,7 +21,8 @@ const brute = new ExpressBrute(store, {
 
 router.route('/register/basic').post(userController.registerBasic);
 router.route('/login/basic').post(brute.prevent, userController.loginBasic);
-
 router.route('/verify').post(userController.verifyEmail);
+
+router.route('/login/facebook').post(userController.loginFacebook);
 
 export default router;

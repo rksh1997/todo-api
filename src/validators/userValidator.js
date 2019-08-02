@@ -20,3 +20,9 @@ export const loginBasicSchema = Joi.object()
     password: Joi.string().required(),
   })
   .required();
+
+export const loginFacebookSchema = Joi.object()
+  .keys({
+    token: Joi.string().required(),
+  })
+  .required();

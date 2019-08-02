@@ -25,10 +25,11 @@ const userSchema = new Schema({
     default: false,
   },
   verificationToken: String,
+  facebookID: String,
 });
 
 userSchema.pre('save', async function hashPassword(done) {
-  if (this.isModified('password') || this.isNew) {
+  if (this.isModified('password') || (this.isNew && this.password)) {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
   }

@@ -21,8 +21,8 @@ A todo list api just for sharping my Node.js skills.
 - :white_check_mark: Add request body schema validation
 - :white_check_mark: Add user input validation
 - :heavy_check_mark: Add security headers
-- Send email verification message
-- Verify email
+- :heavy_check_mark: Send email verification message
+- :heavy_check_mark: Verify email
 - :heavy_check_mark: CI / CD
 - Dockerize the app
 - :heavy_check_mark: Integrate Sentry
