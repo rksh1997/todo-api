@@ -91,9 +91,7 @@ export async function verifyEmail(req, res) {
     await UserService.verifyEmail(email, token);
     res.status(ACCEPTED).json({
       status: ACCEPTED,
-      response: {
-        form: ['Email has been verified'],
-      },
+      response: null,
     });
   } catch (e) {
     res.status(UNAUTHORIZED).json({

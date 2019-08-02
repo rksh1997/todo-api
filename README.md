@@ -9,8 +9,8 @@ A todo list api just for sharping my Node.js skills.
 - :heavy_check_mark: Create user model
 - :heavy_check_mark: User signup with email and password
 - :heavy_check_mark: User login with email and password
-- User signup with Facebook
-- User login with Facebook
+- :heavy_check_mark: User signup with Facebook
+- :heavy_check_mark: User login with Facebook
 - :heavy_check_mark: Create todo model
 - :heavy_check_mark: Add a todo
 - :heavy_check_mark: List user todos

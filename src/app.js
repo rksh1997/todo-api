@@ -32,6 +32,21 @@ if (NODE_ENV === 'development') {
   });
 }
 
+/**
+ * @api {get} /health Health check
+ * @apiName HealthCheck
+ * @apiGroup Application
+ * @apiVersion 1.0.0
+ *
+ * @apiSuccessExample {json} Success-Response:
+ *  HTTP/1.1 200 OK
+ *  {
+ *    "status": 200,
+ *    "response": {
+ *      "messages": ["App is healthy"]
+ *    }
+ *  }
+ */
 app.get('/api/v1/health', (req, res) => {
   res.status(OK).json({
     status: OK,
