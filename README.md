@@ -25,4 +25,4 @@ A todo list api just for sharping my Node.js skills.
 - Verify email
 - :heavy_check_mark: CI / CD
 - Dockerize the app
-- Integrate Sentry
+- :heavy_check_mark: Integrate Sentry

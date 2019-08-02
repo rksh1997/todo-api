@@ -15,7 +15,7 @@ export async function userEmailExists(email) {
 }
 
 export async function loginBasic({ email, password }) {
-  const user = await findByEmail(email.toLowerCase());
+  const user = await User.findOne({ email, isVerified: true });
   if (!user) {
     return false;
   }
@@ -26,4 +26,11 @@ export async function loginBasic({ email, password }) {
   }
 
   return user;
+}
+
+export async function verifyEmail(email, verificationToken) {
+  await User.updateOne(
+    { email, verificationToken },
+    { isVerified: true, verificationToken: null },
+  );
 }

@@ -2,7 +2,7 @@ import mongoose, { Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-import { JWT_SECRET } from '../config';
+import { JWT_SECRET, VERIFICATION_SECRET } from '../config';
 
 const userSchema = new Schema({
   email: {
@@ -13,12 +13,22 @@ const userSchema = new Schema({
     unique: true,
   },
   password: String,
+  isVerified: {
+    type: Boolean,
+    default: false,
+  },
+  verificationToken: String,
 });
 
 userSchema.pre('save', async function hashPassword(done) {
   if (this.isModified('password') || this.isNew) {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
+  }
+
+  // if new and not oauth registration, create verification token
+  if (this.isNew && !this.isVerified) {
+    this.verificationToken = this.generateVerificationToken();
   }
 
   done();
@@ -34,17 +44,24 @@ userSchema.methods.comparePassword = function comparePassword(password) {
 };
 
 userSchema.methods.generateLoginToken = function generateLoginToken() {
-  // eslint-disable-next-line
   const payload = { sub: this._id };
   return jwt.sign(payload, JWT_SECRET);
 };
 
 userSchema.methods.toJSON = function toJSON() {
   return {
-    // eslint-disable-next-line
     id: this._id,
     email: this.email,
   };
+};
+
+userSchema.methods.generateVerificationToken = function generateVerificationToken() {
+  const payload = {
+    id: this._id,
+    email: this.email,
+  };
+
+  return jwt.sign(payload, VERIFICATION_SECRET);
 };
 
 export default mongoose.model('User', userSchema);

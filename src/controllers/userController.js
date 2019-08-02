@@ -1,4 +1,12 @@
-import { OK, CREATED, BAD_REQUEST, CONFLICT, UNAUTHORIZED } from 'http-status';
+import {
+  OK,
+  CREATED,
+  BAD_REQUEST,
+  ACCEPTED,
+  CONFLICT,
+  UNAUTHORIZED,
+} from 'http-status';
+import jwt from 'jsonwebtoken';
 
 import * as UserService from '../services/UserService';
 import {
@@ -6,6 +14,7 @@ import {
   loginBasicSchema,
 } from '../validators/userValidator';
 import { formatJoiError } from '../lib/utils';
+import { VERIFICATION_SECRET } from '../config';
 
 export async function registerBasic(req, res, next) {
   try {
@@ -20,8 +29,8 @@ export async function registerBasic(req, res, next) {
       });
     }
 
-    const alreadExists = await UserService.userEmailExists(req.body.email);
-    if (alreadExists) {
+    const alreadyExists = await UserService.userEmailExists(req.body.email);
+    if (alreadyExists) {
       return res.status(CONFLICT).json({
         status: CONFLICT,
         errors: {
@@ -68,5 +77,29 @@ export async function loginBasic(req, res, next) {
     });
   } catch (e) {
     return next(e);
+  }
+}
+
+export async function verifyEmail(req, res) {
+  const token = req.body.token || '';
+  try {
+    const { email } = await jwt.verify(token, VERIFICATION_SECRET);
+    if (!(await UserService.userEmailExists(email))) {
+      throw new Error('not found');
+    }
+    await UserService.verifyEmail(email, token);
+    res.status(ACCEPTED).json({
+      status: ACCEPTED,
+      response: {
+        form: ['Email has been verified'],
+      },
+    });
+  } catch (e) {
+    res.status(UNAUTHORIZED).json({
+      status: UNAUTHORIZED,
+      errors: {
+        form: ['Invalid or expired token'],
+      },
+    });
   }
 }

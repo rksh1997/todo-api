@@ -1,7 +1,14 @@
 import mongoose from 'mongoose';
 import chai, { should, expect } from 'chai';
 import chaiHttp from 'chai-http';
-import { OK, UNAUTHORIZED, CREATED, CONFLICT, BAD_REQUEST } from 'http-status';
+import {
+  OK,
+  UNAUTHORIZED,
+  CREATED,
+  CONFLICT,
+  BAD_REQUEST,
+  ACCEPTED,
+} from 'http-status';
 
 import connectDB from '../src/db';
 import app from '../src/app';
@@ -55,7 +62,33 @@ describe('Users', () => {
     response.body.errors.password.should.be.a('array');
   });
 
-  it('Should login user with email and password', async () => {
+  it('Should not login unverified user with email and password', async () => {
+    const response = await chai
+      .request(app)
+      .post('/api/v1/users/login/basic')
+      .send({
+        email: 'fake@gmail.com',
+        password: 'fake1234',
+      });
+
+    response.should.have.status(UNAUTHORIZED);
+  });
+
+  it('Should verify user email', async () => {
+    const { verificationToken } = await User.findOne({
+      email: 'fake@gmail.com',
+    });
+    const response = await chai
+      .request(app)
+      .post('/api/v1/users/verify')
+      .send({
+        token: verificationToken,
+      });
+
+    response.should.have.status(ACCEPTED);
+  });
+
+  it('Should login verified user with email and password', async () => {
     const response = await chai
       .request(app)
       .post('/api/v1/users/login/basic')
