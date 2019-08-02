@@ -1,8 +1,6 @@
-import { OK, CREATED, BAD_REQUEST, NOT_FOUND, ACCEPTED } from 'http-status';
+import { OK, CREATED, NOT_FOUND, ACCEPTED } from 'http-status';
 
 import * as TodoService from '../services/TodoService';
-import { createTodoSchema } from '../validators/todoValidator';
-import { formatJoiError } from '../lib/utils';
 import { NotFoundError } from '../lib/errors';
 
 export async function listTodos(req, res, next) {
@@ -19,16 +17,6 @@ export async function listTodos(req, res, next) {
 
 export async function createTodo(req, res, next) {
   try {
-    const { error } = createTodoSchema.validate(req.body, {
-      abortEarly: false,
-    });
-    if (error) {
-      return res.status(BAD_REQUEST).json({
-        status: BAD_REQUEST,
-        errors: formatJoiError(error),
-      });
-    }
-
     const data = { ...req.body, user: req.userID };
     const todo = await TodoService.createTodo(data);
     return res.status(CREATED).json({

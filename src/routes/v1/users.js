@@ -3,6 +3,15 @@ import ExpressBrute, { MemoryStore } from 'express-brute';
 import { TOO_MANY_REQUESTS } from 'http-status';
 
 import * as userController from '../../controllers/userController';
+import joiValidator from '../../middlewares/joiValidator';
+
+import {
+  registerBasicSchema,
+  loginBasicSchema,
+  loginFacebookSchema,
+  emailSchema,
+  resetPasswordSchema,
+} from '../../validators/userValidator';
 
 const router = Router();
 const store = new MemoryStore();
@@ -37,7 +46,7 @@ router
    *    "response": null
    *  }
    */
-  .post(userController.registerBasic);
+  .post(joiValidator(registerBasicSchema), userController.registerBasic);
 
 router
   .route('/login/basic')
@@ -63,7 +72,11 @@ router
    *    }
    *  }
    */
-  .post(brute.prevent, userController.loginBasic);
+  .post(
+    brute.prevent,
+    joiValidator(loginBasicSchema),
+    userController.loginBasic,
+  );
 
 router
   .route('/verify')
@@ -107,7 +120,7 @@ router
    *    }
    *  }
    */
-  .post(userController.loginFacebook);
+  .post(joiValidator(loginFacebookSchema), userController.loginFacebook);
 
 router
   .route('/password/forgot')
@@ -126,7 +139,7 @@ router
    *    "response": null
    *  }
    */
-  .post(userController.sendPasswordResetEmail);
+  .post(joiValidator(emailSchema), userController.sendPasswordResetEmail);
 
 router
   .route('/password/reset')
@@ -146,6 +159,6 @@ router
    *    "response": null
    *  }
    */
-  .post(userController.resetPassword);
+  .post(joiValidator(resetPasswordSchema), userController.resetPassword);
 
 export default router;

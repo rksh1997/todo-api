@@ -1,6 +1,8 @@
 import { Router } from 'express';
 
 import * as todoController from '../../controllers/todoController';
+import joiValidator from '../../middlewares/joiValidator';
+import { createTodoSchema } from '../../validators/todoValidator';
 
 const router = Router();
 
@@ -37,7 +39,7 @@ router
    *    }
    *  }
    */
-  .post(todoController.createTodo)
+  .post(joiValidator(createTodoSchema), todoController.createTodo)
   /**
    * @api {get} /todos List Todos
    * @apiName ListTodos
