@@ -13,6 +13,8 @@ import {
   registerBasicSchema,
   loginBasicSchema,
   loginFacebookSchema,
+  emailSchema,
+  resetPasswordSchema,
 } from '../validators/userValidator';
 import { formatJoiError } from '../lib/utils';
 import { VERIFICATION_SECRET } from '../config';
@@ -126,5 +128,58 @@ export async function loginFacebook(req, res, next) {
     });
   } catch (e) {
     return next(e);
+  }
+}
+
+export async function sendPasswordResetEmail(req, res, next) {
+  try {
+    const { error } = emailSchema.validate(req.body);
+    if (error) {
+      return res.status(BAD_REQUEST).json({
+        status: BAD_REQUEST,
+        errors: formatJoiError(error),
+      });
+    }
+
+    const user = await UserService.findByEmail(req.body.email);
+    if (user) {
+      await user.sendPasswordResetEmail();
+    }
+
+    return res.status(OK).json({
+      status: OK,
+      response: null,
+    });
+  } catch (e) {
+    return next(e);
+  }
+}
+
+export async function resetPassword(req, res) {
+  try {
+    const { error } = resetPasswordSchema.validate(req.body, {
+      abortEarly: false,
+    });
+    if (error) {
+      return res.status(BAD_REQUEST).json({
+        status: BAD_REQUEST,
+        errors: formatJoiError(error),
+      });
+    }
+
+    const { token, password } = req.body;
+    await UserService.resetPasswordByToken(token, password);
+
+    return res.status(ACCEPTED).json({
+      status: ACCEPTED,
+      response: null,
+    });
+  } catch (e) {
+    return res.status(UNAUTHORIZED).json({
+      status: UNAUTHORIZED,
+      errors: {
+        form: ['Invalid or expired token'],
+      },
+    });
   }
 }

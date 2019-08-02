@@ -26,3 +26,21 @@ export const loginFacebookSchema = Joi.object()
     token: Joi.string().required(),
   })
   .required();
+
+export const emailSchema = Joi.object()
+  .keys({
+    email: Joi.string()
+      .email()
+      .required(),
+  })
+  .required();
+
+export const resetPasswordSchema = Joi.object()
+  .keys({
+    token: Joi.string().required(),
+    password: Joi.string()
+      .min(5)
+      .max(50)
+      .required(),
+  })
+  .required();

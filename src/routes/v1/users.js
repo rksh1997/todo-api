@@ -109,4 +109,43 @@ router
    */
   .post(userController.loginFacebook);
 
+router
+  .route('/password/forgot')
+  /**
+   * @api {post} /users/password/forgot Send Recovery Email
+   * @apiName SendRecoveryEmail
+   * @apiGroup User
+   * @apiVersion 1.0.0
+   *
+   * @apiParam {String} email User email.
+   *
+   * @apiSuccessExample {json} Success-Response:
+   *  HTTP/1.1 200 OK
+   *  {
+   *    "status": 200,
+   *    "response": null
+   *  }
+   */
+  .post(userController.sendPasswordResetEmail);
+
+router
+  .route('/password/reset')
+  /**
+   * @api {post} /users/password/reset Reset Password
+   * @apiName ResetPassword
+   * @apiGroup User
+   * @apiVersion 1.0.0
+   *
+   * @apiParam {String} token Reset token retrieved from sent email.
+   * @apiParam {String{5..50}} password New password.
+   *
+   * @apiSuccessExample {json} Success-Response:
+   *  HTTP/1.1 202 ACCEPTED
+   *  {
+   *    "status": 202,
+   *    "response": null
+   *  }
+   */
+  .post(userController.resetPassword);
+
 export default router;

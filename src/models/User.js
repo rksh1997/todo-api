@@ -5,11 +5,13 @@ import jwt from 'jsonwebtoken';
 import {
   JWT_SECRET,
   VERIFICATION_SECRET,
+  PASSWORD_RESET_SECRET,
   EMAIL_FROM,
   NODE_ENV,
 } from '../config';
 import { sendEmail } from '../lib/mailer';
 import verifyEmailTemplate from '../lib/verifyEmailTemplate';
+import resetPasswordTemplate from '../lib/resetPasswordTemplate';
 
 const userSchema = new Schema({
   email: {
@@ -26,6 +28,7 @@ const userSchema = new Schema({
   },
   verificationToken: String,
   facebookID: String,
+  resetPasswordToken: String,
 });
 
 userSchema.pre('save', async function hashPassword(done) {
@@ -82,6 +85,25 @@ userSchema.methods.sendVerificationEmail = async function sendVerificationEmail(
     subject: 'Confirm your TodoApp email',
     html: verifyEmailTemplate(this.verificationToken),
   });
+};
+
+userSchema.methods.sendPasswordResetEmail = async function sendPasswordResetEmail() {
+  this.resetPasswordToken = jwt.sign(
+    {
+      email: this.email,
+      exp: Math.floor(Date.now() / 1000) + 4 * 60 * 60,
+    },
+    PASSWORD_RESET_SECRET,
+  );
+  await this.save();
+  if (NODE_ENV !== 'test') {
+    await sendEmail({
+      from: EMAIL_FROM,
+      to: this.email,
+      subject: 'Reset you TodoApp password',
+      html: resetPasswordTemplate(this.resetPasswordToken),
+    });
+  }
 };
 
 export default mongoose.model('User', userSchema);

@@ -1,5 +1,8 @@
+import jwt from 'jsonwebtoken';
+
 import User from '../models/User';
 import * as Facebook from '../lib/facebook';
+import { PASSWORD_RESET_SECRET } from '../config';
 
 export const findById = id => User.findOne({ _id: id });
 export const findByEmail = email => User.findOne({ email });
@@ -49,4 +52,12 @@ export async function loginFacebook(token) {
   }
 
   return user;
+}
+
+export async function resetPasswordByToken(token, password) {
+  const { email } = jwt.verify(token, PASSWORD_RESET_SECRET);
+  const user = await User.findOne({ email, resetPasswordToken: token });
+  user.set('password', password);
+  user.set('resetPasswordToken', '');
+  await user.save();
 }

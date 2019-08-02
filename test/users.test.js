@@ -147,4 +147,44 @@ describe('Users', () => {
     response.body.response.user.email.should.equal('fake@facebook.com');
     response.body.response.token.should.be.a('string');
   });
+
+  it('Should send password revoery email', async () => {
+    const response = await chai
+      .request(app)
+      .post('/api/v1/users/password/forgot')
+      .send({
+        email: 'fake@facebook.com',
+      });
+
+    response.should.have.status(OK);
+  });
+
+  it('Should reset user password', async () => {
+    const user = await User.findOne({
+      email: 'fake@facebook.com',
+    });
+    const response = await chai
+      .request(app)
+      .post('/api/v1/users/password/reset')
+      .send({
+        token: user.resetPasswordToken,
+        password: 'fake123',
+      });
+
+    response.should.have.status(ACCEPTED);
+  });
+
+  it('Should login with new recovered password', async () => {
+    const response = await chai
+      .request(app)
+      .post('/api/v1/users/login/basic')
+      .send({
+        email: 'fake@facebook.com',
+        password: 'fake123',
+      });
+
+    response.should.have.status(OK);
+    response.body.response.user.email.should.equal('fake@facebook.com');
+    response.body.response.token.should.be.a('string');
+  });
 });
