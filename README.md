@@ -86,6 +86,7 @@ And then you can check app health on the host at `http://localhost:HOST_PORT/api
 - Request rate limit (to prevent DDOS attacks) ([Express Rate Limit](https://www.npmjs.com/package/express-rate-limit)).
 
 **App features**:
+
 - User signup with email and password.
 - User login with email and password.
 - User login with [Facebook](https://www.facebook.com).
