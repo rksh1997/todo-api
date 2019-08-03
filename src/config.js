@@ -4,6 +4,8 @@ import { config as dotenv } from 'dotenv';
 export const NODE_ENV = process.env.NODE_ENV || 'development';
 if (NODE_ENV === 'development') {
   dotenv();
+} else if (NODE_ENV === 'production') {
+  dotenv({ path: path.join(__dirname, '..', '.env.prod') });
 } else {
   dotenv({ path: path.join(__dirname, '..', '.env.test') });
 }
