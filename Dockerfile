@@ -8,10 +8,13 @@ COPY . .
 
 RUN yarn install && yarn build
 
-ENV DB_URL ${DB_URL}
+ARG DB_URL
+ARG SENTRY_DSN
+
+ENV DB_URL=$DB_URL
 ENV PORT 8080
-ENV SENTRY_DSN ${SENTRY_DSN}
+ENV SENTRY_DSN=$SENTRY_DSN
 
 EXPOSE 8080
 
-CMD [ "yarn", "start" ]
+CMD [ "node", "build/index.js" ]
