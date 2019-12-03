@@ -18,6 +18,10 @@ export const VERIFICATION_SECRET =
   process.env.VERIFICATION_SECRET || '%$3cdeZS';
 export const PASSWORD_RESET_SECRET =
   process.env.PASSWORD_RESET_SECRET || 'wnjif&^fwd$%';
+export const ENABLE_CORS = process.env.ENABLE_CORS === 'true';
+export const CORS_WHITELIST = ENABLE_CORS
+  ? process.env.CORS_WHITELIST.split(',').map(url => url.trim())
+  : [];
 
 export const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 

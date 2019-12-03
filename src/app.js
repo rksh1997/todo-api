@@ -5,22 +5,41 @@ import { OK, NOT_FOUND, INTERNAL_SERVER_ERROR } from 'http-status';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import * as Sentry from '@sentry/node';
+import cors from 'cors';
 
 import winston from './lib/winston';
 import v1Routes from './routes/v1';
-import { NODE_ENV, SENTRY_DSN } from './config';
+import { NODE_ENV, SENTRY_DSN, ENABLE_CORS, CORS_WHITELIST } from './config';
 import { NotFoundError, InternalServerError } from './lib/errors';
 
 const app = express();
 Sentry.init({ dsn: SENTRY_DSN });
 
 app.use(Sentry.Handlers.requestHandler());
+
+if (ENABLE_CORS) {
+  app.use(
+    cors({
+      origin: (origin, callback) => {
+        if (CORS_WHITELIST.indexOf(origin) !== -1) {
+          callback(null, true);
+        } else {
+          callback(new Error('Not allowed by CORS'));
+        }
+      },
+    }),
+  );
+} else {
+  app.use(cors());
+}
+
 app.use(
   rateLimit({
     windowMs: 60 * 1000,
     max: 30,
   }),
 );
+
 app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());

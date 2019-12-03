@@ -8,7 +8,7 @@ A todo list api just for sharping my Node.js skills.
 
 ## Environment Variables
 | Variable              | Description                                                              | Example                               |
-|-----------------------|--------------------------------------------------------------------------|---------------------------------------|
+| --------------------- | ------------------------------------------------------------------------ | ------------------------------------- |
 | PORT                  | On which port to run the app ?                                           | 7000                                  |
 | JWT_SECRET            | Strong secret string used to encrypt jwt tokens                          | dfs&5few#%$                           |
 | VERIFICATION_SECRET   | String secret string used to encrypt tokens sent in verification email   | fds*&534#%                            |
@@ -21,6 +21,8 @@ A todo list api just for sharping my Node.js skills.
 | SMTP_PASS             | SMTP server password                                                     | 42#%2s@4                              |
 | EMAIL_FROM            | When sending email, what is *from* field ?                               | noreply@todoapp.com                   |
 | DB_URL                | Mongodb url                                                              | http://localhost:27017/todoapp        |
+| ENABLE_CORS           | Enable cors white listing ?                                              | true                                  |
+| CORS_WHITELIST        | Comma separated urls of cors whitelist                                   | http://example.com,example.com,api.io |
 
 
 ## Development
@@ -51,21 +53,9 @@ Run `make deploy`.
 If you are using circleci for deployment, then set the above variables in circleci project environment variables.
 
 ## Build docker image
-Proivde a `.env.prod` file in the root directory but make sure you do not push the image to docker hub with this file in it.
-
-If you want to push the image, then do not use `.env.prod`, but use some tool like `terraform` to pass environment variables to the container.
+Proivde a `.env.prod` file in the root directory but make sure you do not push the image to docker hub with this file in it, or don't provide it and pass the variables when spinning the container up.
 
 Run `docker build . --tag tagname`
-
-Then you can sping a container by running:
-
-`docker run -p HOST_PORT:APP_PORT -d tagname`
-
-**HOST_PORT**: A port on the host machine
-
-**APP_PORT**: The PORT you specified in .env file
-
-And then you can check app health on the host at `http://localhost:HOST_PORT/api/v1/health`
 
 ## Features
 
@@ -75,10 +65,10 @@ And then you can check app health on the host at `http://localhost:HOST_PORT/api
 - Code linters (Eslint).
 - API Docs.
 - [Sentry integration](https://sentry.io).
-- .env files Support.
-- API Tests.
-- Continuous integration with circleci.
-- Continuous delevery with circleci and heroku.
+- .env files support.
+- API tests.
+- Continuous integration with Circleci.
+- Continuous delevery with Circleci and heroku.
 - Docker image.
 - User input validation ([Joi](https://www.npmjs.com/package/@hapi/joi)).
 - Security headers ([Helmet](https://www.npmjs.com/package/helmet)).
@@ -100,4 +90,4 @@ And then you can check app health on the host at `http://localhost:HOST_PORT/api
 - Complete todo.
 
 ## Todo
-- Graphql API (In progress)
+- Graphql API
