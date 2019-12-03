@@ -31,11 +31,35 @@ jobs:
           only-branch: master
           force: true
 
+  publish:
+    docker:
+      - image: circleci/buildpack-deps:stretch
+    environment:
+      - IMAGE_NAME: frankensteinxd/todoapi:latest
+    working_directory: ~/app
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build docker image
+          command: docker build --tag $IMAGE_NAME .
+      - run:
+          name: Push to docker hub
+          command: |
+            echo "$DOCKERHUB_PASS" | docker login --username frankensteinxd --password-stdin
+            docker push $IMAGE_NAME
+
 workflows:
   version: 2
-  test_and_deploy:
+  test_deploy_push:
     jobs:
       - test
       - deploy:
           requires:
             - test
+      - publish:
+          requires:
+            - test
+          filters:
+            branches:
+              only: master
