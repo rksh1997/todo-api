@@ -1,6 +1,6 @@
 # Todo API
 
-A todo list api just for sharping my Node.js skills.
+A todo list api just for sharprning my Node.js skills.
 
 ## Prerequisites
 1. [Node.js](https://nodejs.org)
