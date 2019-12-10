@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 
 import * as UserService from '../services/UserService';
 
-import { VERIFICATION_SECRET } from '../config';
+import { VERIFICATION_SECRET, JWT_SECRET } from '../config';
 
 export async function registerBasic(req, res, next) {
   try {
@@ -36,6 +36,10 @@ export async function loginBasic(req, res, next) {
       });
     }
 
+    // @TODO: make this with (remeber me) option
+    const maxAge = 60000 * 60 * 24 * 60; // 1 month
+    res.cookie('refreshToken', user.refreshToken, { maxAge, httpOnly: true });
+
     return res.status(OK).json({
       status: OK,
       response: {
@@ -46,6 +50,43 @@ export async function loginBasic(req, res, next) {
   } catch (e) {
     return next(e);
   }
+}
+
+export async function getAccessToken(req, res, next) {
+  const { refreshToken } = req.cookies;
+
+  const unAuthorizedResponse = {
+    status: UNAUTHORIZED,
+    errors: {
+      token: ['Invalid or expired token'],
+    },
+  };
+
+  if (!refreshToken) {
+    return res.status(UNAUTHORIZED).json(unAuthorizedResponse);
+  }
+
+  try {
+    const { sub } = await jwt.verify(refreshToken, JWT_SECRET);
+    const user = await UserService.findById(sub);
+    if (!user) {
+      res.status(UNAUTHORIZED).json(unAuthorizedResponse);
+    }
+
+    return res.status(OK).json({
+      status: OK,
+      response: {
+        token: await user.generateLoginToken(),
+      },
+    });
+  } catch (e) {
+    return next(e);
+  }
+}
+
+export function logout(_, res) {
+  res.clearCookie('refreshToken');
+  res.status(OK).json({ status: OK });
 }
 
 export async function verifyEmail(req, res) {
@@ -73,6 +114,10 @@ export async function verifyEmail(req, res) {
 export async function loginFacebook(req, res, next) {
   try {
     const user = await UserService.loginFacebook(req.body.token);
+
+    // @TODO: make this with (remeber me option)
+    const maxAge = 60000 * 60 * 24 * 60; // 1 month
+    res.cookie('refreshToken', user.refreshToken, { maxAge, httpOnly: true });
 
     return res.status(OK).json({
       status: OK,

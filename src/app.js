@@ -6,6 +6,7 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import * as Sentry from '@sentry/node';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 import winston from './lib/winston';
 import v1Routes from './routes/v1';
@@ -14,12 +15,12 @@ import { NotFoundError, InternalServerError } from './lib/errors';
 
 const app = express();
 Sentry.init({ dsn: SENTRY_DSN });
-
 app.use(Sentry.Handlers.requestHandler());
 
 if (ENABLE_CORS) {
   app.use(
     cors({
+      credentials: true,
       origin: (origin, callback) => {
         if (CORS_WHITELIST.indexOf(origin) !== -1) {
           callback(null, true);
@@ -30,7 +31,12 @@ if (ENABLE_CORS) {
     }),
   );
 } else {
-  app.use(cors());
+  app.use(
+    cors({
+      credentials: true,
+      origin: (_, cb) => cb(null, true),
+    }),
+  );
 }
 
 app.use(
@@ -41,6 +47,7 @@ app.use(
 );
 
 app.use(helmet());
+app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 

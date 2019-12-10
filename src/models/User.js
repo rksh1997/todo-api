@@ -27,6 +27,7 @@ const userSchema = new Schema({
     default: false,
   },
   verificationToken: String,
+  refreshToken: String,
   facebookID: String,
   resetPasswordToken: String,
 });
@@ -35,6 +36,11 @@ userSchema.pre('save', async function hashPassword(done) {
   if (this.isModified('password') || (this.isNew && this.password)) {
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
+  }
+
+  // generate the user a long lived refresh token (actually forever, but could be revoked)
+  if (this.isNew) {
+    this.refreshToken = await this.generateRefreshToken();
   }
 
   // if new and not oauth registration, create verification token
@@ -58,6 +64,13 @@ userSchema.methods.comparePassword = function comparePassword(password) {
 };
 
 userSchema.methods.generateLoginToken = function generateLoginToken() {
+  const payload = { sub: this._id };
+  return jwt.sign(payload, JWT_SECRET, {
+    expiresIn: 5 * 60 * 60, // five minutes
+  });
+};
+
+userSchema.methods.generateRefreshToken = async function generateRefreshToken() {
   const payload = { sub: this._id };
   return jwt.sign(payload, JWT_SECRET);
 };

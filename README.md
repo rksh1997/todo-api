@@ -77,6 +77,7 @@ Run `docker build . --tag tagname`
 
 **App features**:
 
+- Access tokens and Refresh tokens
 - User signup with email and password.
 - User login with email and password.
 - User login with [Facebook](https://www.facebook.com).

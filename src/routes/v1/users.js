@@ -98,6 +98,43 @@ router
   .post(userController.verifyEmail);
 
 router
+  .route('/refresh_token')
+  /**
+   * @api {get} /users/refresh_token Refresh Token
+   * @apiName RefreshToken
+   * @apiGroup User
+   * @apiVersion 1.0.0
+   *
+   * @apiParam {String} refreshToken a **Cookie** with the value of user's refresh token.
+   *
+   * @apiSuccessExample {json} Success-Response:
+   *  HTTP/1.1 200 OK
+   *  {
+   *    "status": 200,
+   *    "response": {
+   *      "token": "eyJhbGc.eyJzdWIi.FlE7K"
+   *    }
+   *  }
+   */
+  .get(userController.getAccessToken);
+
+router
+  .route('/logout')
+  /**
+   * @api {get} /users/logout Logout
+   * @apiName Logout
+   * @apiGroup User
+   * @apiVersion 1.0.0
+   *
+   * @apiSuccessExample {json} Success-Response:
+   *  HTTP/1.1 200 OK
+   *  {
+   *    "status": 200
+   *  }
+   */
+  .get(userController.logout);
+
+router
   .route('/login/facebook')
   /**
    * @api {post} /users/login/facebook Facebook Login
