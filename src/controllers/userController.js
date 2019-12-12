@@ -38,7 +38,11 @@ export async function loginBasic(req, res, next) {
 
     // @TODO: make this with (remeber me) option
     const maxAge = 60000 * 60 * 24 * 60; // 1 month
-    res.cookie('refreshToken', user.refreshToken, { maxAge, httpOnly: true });
+    res.cookie('refreshToken', user.refreshToken, {
+      maxAge,
+      httpOnly: true,
+      sameSite: true,
+    });
 
     return res.status(OK).json({
       status: OK,
@@ -117,7 +121,11 @@ export async function loginFacebook(req, res, next) {
 
     // @TODO: make this with (remeber me option)
     const maxAge = 60000 * 60 * 24 * 60; // 1 month
-    res.cookie('refreshToken', user.refreshToken, { maxAge, httpOnly: true });
+    res.cookie('refreshToken', user.refreshToken, {
+      maxAge,
+      httpOnly: true,
+      sameSite: true,
+    });
 
     return res.status(OK).json({
       status: OK,
