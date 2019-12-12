@@ -110,9 +110,34 @@ describe('Users', () => {
       });
 
     response.should.have.status(OK);
+    response.should.have.cookie('refreshToken');
     response.body.response.user.email.should.equal('fake@gmail.com');
     expect(response.body.response.user.password).to.not.be.a('string');
     response.body.response.token.should.be.a('string');
+  });
+
+  it('Should refresh token', async () => {
+    const agent = chai.request.agent(app);
+    let response = await agent.post('/api/v1/users/login/basic').send({
+      email: 'fake@gmail.com',
+      password: 'fake1234',
+    });
+
+    response = await agent.get('/api/v1/users/refresh_token');
+    response.should.have.status(OK);
+    response.body.response.token.should.be.a('string');
+  });
+
+  it('Should logout', async () => {
+    const agent = chai.request.agent(app);
+    let response = await agent.post('/api/v1/users/login/basic').send({
+      email: 'fake@gmail.com',
+      password: 'fake1234',
+    });
+
+    response.should.have.cookie('refreshToken');
+    response = await chai.request(app).get('/api/users/logout');
+    response.should.not.have.cookie('refreshToken');
   });
 
   it('Should not login with wrong email password', async () => {
